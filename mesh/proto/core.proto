@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package mesh;
+
+option go_package = "github.com/eworth0-lgtm/Ener-gentic/mesh/proto;proto";
+
+// Forecaster service
+service Forecaster {
+  rpc Predict(Series) returns (Forecast);
+  rpc PredictBatch(BatchSeries) returns (BatchForecast);
+}
+
+// Optimizer service
+service Optimizer {
+  rpc Dispatch(Forecast) returns (Series);
+  rpc DispatchBatch(BatchForecast) returns (BatchSeries);
+}
+
+message Series {
+  repeated float values = 1;
+}
+
+message Forecast {
+  repeated float values = 1;
+}
+
+message BatchSeries {
+  repeated Series series = 1;
+}
+
+message BatchForecast {
+  repeated Forecast forecasts = 1;
+}
