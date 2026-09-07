@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  forecaster:
+    build: ./forecaster
+    ports:
+      - "50051:50051"
+      - "8815:8815"
+    environment:
+      - CADENCE=minutes
+    networks:
+      - mesh-net
+
+  optimizer:
+    build: ./optimizer
+    ports:
+      - "50052:50052"
+    networks:
+      - mesh-net
+
+  gateway:
+    build: ./gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - forecaster
+      - optimizer
+    environment:
+      - FORECASTER_ADDR=forecaster:50051
+      - FORECASTER_FLIGHT_ADDR=forecaster:8815
+      - OPTIMIZER_ADDR=optimizer:50052
+    networks:
+      - mesh-net
+
+networks:
+  mesh-net:
+    driver: bridge
